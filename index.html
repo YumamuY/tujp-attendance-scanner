@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>TUJP Attendance Scanner</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="app.js" defer></script>
+</head>
+
+<body>
+
+    <main class="app">
+
+        <header>
+            <h1>TUJP Attendance Scanner</h1>
+            <p class="subtitle">QR scanner prototype</p>
+        </header>
+
+        <section class="panel">
+
+            <h2>Camera</h2>
+
+            <div class="camera-container">
+                
+                <video
+                    id="camera"
+                    autoplay
+                    playsinline
+                    muted
+                ></video>
+
+                <p id="camera-placeholder">
+                    Camera is currently off.
+                </p>
+            </div>
+
+            <div class="controls">
+
+                <button id="start-button">
+                    Start Camera
+                </button>
+
+                <button id="stop-button" disabled>
+                    Stop camera
+                </button>
+
+            </div>
+
+            <p id="camera-status">
+                Status: stopped
+            </p>
+
+        </section>
+
+        <section class="panel">
+
+            <h2>Latest scan</h2>
+
+            <div id="scan-result">
+                No QR code scanned yet.
+            </div>
+
+        </section>
+
+    </main>
+
+</body>
+</html>
