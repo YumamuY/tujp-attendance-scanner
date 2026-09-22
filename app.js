@@ -8,50 +8,85 @@ const cameraPlaceholder = document.getElementById("camera-placeholder");
 
 const resultElement = document.getElementById("scan-result");
 
-let cameraStream = null;
+const codeReader = 
+    new ZXingBrowser.BrowserQRCodeReader();
 
-async function startCamera() {
+let scannerControls = null;
+
+async function startScanner() {
+    
+    if (scannerControls) {
+        return;
+    }
 
     try {
-        cameraStatus.textContent = "Status: requesting camera...";
+
+        cameraStatus.textContent = 
+            "Status: starting scanner...";
         
-        cameraStream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                facingMode: {
-                    ideal: "environment"
+        scannerControls =
+            await codeReader.decodeFromConstraints(
+
+                {
+                    video: {
+                        facingMode: {
+                            ideal: "environment"
+                        }
+                    },
+
+                    audio: false
+                },
+
+                videoElement,
+
+                function (result, error) {
+                    
+                    if (result) {
+
+                        const decodedText = 
+                            result.getText();
+
+                        console.log(
+                            "QR detected:",
+                            decodedText
+                        );
+
+                        resultElement.textContent =
+                            decodedText;
+                    }
                 }
-            },
-            audio: false
-        });
 
-        videoElement.srcObject = cameraStream;
-
+            );
+        
         cameraPlaceholder.hidden = true;
 
         startButton.disabled = true;
         stopButton.disabled = false;
 
-        cameraStatus.textContent = "Status: camera running";
+        cameraStatus.textContent = 
+            "Status: scanning";
     } catch (error) {
-        console.error("Camera error:", error);
+
+        console.error(
+            "Scanner error",
+            error
+        );
 
         cameraStatus.textContent = 
-            `Status: camera error (${error.name})`;
+            `Status: scanner error (${error.name})`;
 
-        resultElement.textContent = 
-            "Could not access the camera.";
+        scannerControls = null;
     }
 }
 
-function stopCamera() {
 
-    if (cameraStream) {
+function stopScanner() {
 
-        cameraStream
-            .getTracks()
-            .forEach(track => track.stop());
+    if(scannerControls) {
 
-        cameraStream = null;
+        scannerControls.stop();
+
+        scannerControls = null;
     }
 
     videoElement.srcObject = null;
@@ -61,8 +96,16 @@ function stopCamera() {
     startButton.disabled = false;
     stopButton.disabled = true;
 
-    cameraStatus.textContent = "Status: stopped";
+    cameraStatus.textContent = 
+        "Status: stopped";
 }
 
-startButton.addEventListener("click", startCamera);
-stopButton.addEventListener("click", stopCamera);
+startButton.addEventListener(
+    "click",
+    startScanner
+);
+
+stopButton.addEventListener(
+    "click",
+    stopScanner
+);
